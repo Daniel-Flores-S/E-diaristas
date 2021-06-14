@@ -1,5 +1,5 @@
 
-export default interface UserShotInterface {
+export  interface UserShortInterface {
     nome_completo: string;
     foto_usuario?: string;
     reputaçcao?: number;

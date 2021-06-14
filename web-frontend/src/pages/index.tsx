@@ -2,7 +2,12 @@ import PageTitle from "ui/components/data-display/PageTitle";
 import SafeEnvironment from "ui/components/feedback/SafeEnvironment";
 import UserInformetion from "ui/components/data-display/UserInformetion";
 import TextFieldMask from "ui/components/inputs/TextFieldMask";
-import { Button, Typography, Container } from "@material-ui/core";
+import {
+    Button,
+    Typography,
+    Container,
+    CircularProgress,
+} from "@material-ui/core";
 import useIndex from "data/hooks/Pages/useIndex.Page";
 
 import {
@@ -12,7 +17,17 @@ import {
 } from "styles/pages/index.styled";
 
 export default function Home() {
-    const { cep, setCep, cepValido } = useIndex();
+    const {
+        cep,
+        setCep,
+        cepValido,
+        buscarProfissionais,
+        erro,
+        diaristas,
+        buscaFeita,
+        carregando,
+        diaristasRestantes,
+    } = useIndex();
     return (
         <div>
             <SafeEnvironment />
@@ -24,7 +39,7 @@ export default function Home() {
             />
             <FormElementsContainer>
                 <TextFieldMask
-                    mask={"99.999-99"}
+                    mask={"99.999-999"}
                     label={"Digite seu CEP"}
                     fullWidth
                     variant={"outlined"}
@@ -32,81 +47,66 @@ export default function Home() {
                     onChange={(event) => setCep(event.target.value)}
                 />
 
-                <Typography color={"error"}>CEP Inválido</Typography>
-                
+                {erro && <Typography color={"error"}>{erro}</Typography>}
+
                 <Button
                     variant={"contained"}
                     color={"secondary"}
                     sx={{ width: "220px" }}
+                    disabled={!cepValido || carregando}
+                    onClick={() => buscarProfissionais(cep)}
                 >
-                    Buscar
+                    {carregando ? <CircularProgress size={20} /> : "Buscar"}
                 </Button>
             </FormElementsContainer>
+
             <Container>
-                <ProfissionaisPaper>
-                    <ProfissionaisContainer>
-                        <UserInformetion
-                            picture={"https://github.com/Daniel-Flores-S.png"}
-                            name={"Daniel"}
-                            rating={4}
-                            description={"Bahia"}
-                        />
-                        <UserInformetion
-                            picture={"https://github.com/Daniel-Flores-S.png"}
-                            name={"Daniel"}
-                            rating={4}
-                            description={"Bahia"}
-                        />
-                        <UserInformetion
-                            picture={"https://github.com/Daniel-Flores-S.png"}
-                            name={"Daniel"}
-                            rating={4}
-                            description={"Bahia"}
-                        />
-                        <UserInformetion
-                            picture={"https://github.com/Daniel-Flores-S.png"}
-                            name={"Daniel"}
-                            rating={4}
-                            description={"Bahia"}
-                        />
-                        <UserInformetion
-                            picture={"https://github.com/Daniel-Flores-S.png"}
-                            name={"Daniel"}
-                            rating={4}
-                            description={"Bahia"}
-                        />
-                        <UserInformetion
-                            picture={"https://github.com/Daniel-Flores-S.png"}
-                            name={"Daniel"}
-                            rating={4}
-                            description={"Bahia"}
-                        />
-                        <UserInformetion
-                            picture={"https://github.com/Daniel-Flores-S.png"}
-                            name={"Daniel"}
-                            rating={4}
-                            description={"Bahia"}
-                        />
-                        <UserInformetion
-                            picture={"https://github.com/Daniel-Flores-S.png"}
-                            name={"Daniel"}
-                            rating={4}
-                            description={"Bahia"}
-                        />
-                        <UserInformetion
-                            picture={"https://github.com/Daniel-Flores-S.png"}
-                            name={"Daniel"}
-                            rating={4}
-                            description={"Bahia"}
-                        />
-                        <UserInformetion
-                            picture={"https://github.com/Daniel-Flores-S.png"}
-                            name={"Daniel"}
-                            rating={4}
-                            description={"Bahia"}
-                        />
-                    </ProfissionaisContainer>
-                </ProfissionaisPaper>
+                {buscaFeita &&
+                    (diaristas.length > 0 ? (
+                        <ProfissionaisPaper>
+                            <ProfissionaisContainer>
+                                {diaristas.map(
+                                    (diarista, index) => {
+                                    return(
+                                         <UserInformetion
+                                         key={index}
+                                            picture={diarista.foto_usuario}
+                                            name={diarista.nome_completo}
+                                            rating={diarista.reputaçcao}
+                                            description={diarista.cidade}
+                                        />
+                                    );
+                                    }
+                                )}
+
+
+                            </ProfissionaisContainer>
+                            <Container sx={{ textAlign: "center" }}>
+                                {diaristasRestantes > 0 && (
+                                    <Typography sx={{ mt: 5 }}>
+                                        ...e mais {diaristasRestantes}{" "}
+                                        {diaristasRestantes > 1
+                                            ? "profissionais atendem"
+                                            : "profissional atende"}{" "}
+                                        ao seu endereço.
+                                    </Typography>
+                                )}
+
+                                <Button
+                                    variant={"contained"}
+                                    color={"secondary"}
+                                    sx={{ mt: 5 }}
+                                >
+                                    Contratar um profissional
+                                </Button>
+                            </Container>
+                        </ProfissionaisPaper>
+                    ) : (
+                        <Typography align={"center"} color={"textPrimary"}>
+                            Ainda não temos nenhuma diarista disponivel para sua
+                            região
+                        </Typography>
+                    ))}
             </Container>
         </div>
     );
