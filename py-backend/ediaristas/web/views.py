@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .forms import diarista_form
 from .models import Diarista
 
@@ -14,4 +14,22 @@ def cadastrar_diaristas(request):
 def listar_diaristas(request):
     diaristas = Diarista.objects.all()
     return render(request, 'listar_diaristas.html', {'diaristas': diaristas})
+
+def editar_diaristas(request, diarista_id):
+    diarista = Diarista.objects.get(id=diarista_id)
+    if request.method == "POST":
+        form_diarista = diarista_form.DiaristaForm(request.POST or None, request.FILES, instance=diarista)
+        if form_diarista.is_valid():
+            form_diarista.save()
+            return redirect('listar_diaristas')
+    else:
+        form_diarista = diarista_form.DiaristaForm(instance=diarista)
+    return render(request, 'form_diarista.html', {'form_diarista': form_diarista})
+
+def remover_diaristas(request, diarista_id):
+    diarista = Diarista.objects.get(id=diarista_id)
+    diarista.delete()
+    return redirect('listar_diaristas')
+
+
 
