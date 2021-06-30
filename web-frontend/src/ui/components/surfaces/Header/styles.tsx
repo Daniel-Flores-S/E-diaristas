@@ -3,7 +3,7 @@ import { AppBar, experimentalStyled as styled } from "@material-ui/core";
 export const HeaderAppBar = styled(AppBar)`
     position: sticky;
     background-color: ${(props) => props.theme.palette.background.paper};
-    box-shadow: 0px 5px 4px rgba(0, 0, 0, 0.06);
+    box-shadow: 0px 5px 4px rgba(0, 0, 0, 1);
 
     ${(props) => props.theme.breakpoints.up("md")} {
         .MuiToolbar-root {
